@@ -4,9 +4,13 @@ import { connect } from 'react-redux';
 import { setPlaylistItem } from '../actions';
 
 const List = props => {
-  const { items, setItem, selectedVideoId } = props;
+  const { items, setItem, selectedVideoId, nextVideoId } = props;
+
+  const currentID = selectedVideoId || nextVideoId || items[0].resourceId.videoId;
+
   const listItems = items.map((item, index) => {
-    const isSelected = selectedVideoId ? item.resourceId.videoId === selectedVideoId : index === 0;
+    const isSelected = item.resourceId.videoId === currentID;
+
     return (
       <div
         className={`list-wrapper ${isSelected ? 'active' : ''}`}
@@ -38,12 +42,14 @@ const List = props => {
 List.defaultProps = {
   items: [],
   setItem: {},
+  nextVideo: {},
 };
 
 List.propTypes = {
   items: PropTypes.array,
   setItem: PropTypes.func,
   selectedVideoId: PropTypes.string,
+  nextVideo: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
@@ -52,6 +58,8 @@ const mapStateToProps = state => ({
     state.playlist.selectedItem &&
     state.playlist.selectedItem.resourceId &&
     state.playlist.selectedItem.resourceId.videoId,
+  nextVideoId:
+    state.nextVideo && state.nextVideo.nextVideoData && state.nextVideo.nextVideoData.video_id,
 });
 
 const mapDispatchToProps = dispatch => ({
